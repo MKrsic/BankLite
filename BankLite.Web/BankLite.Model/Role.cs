@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace BankLite.Model
 {
-    [Table("Currency")]
-    public class Currency : EntityBase
+    [Table("Role")]
+    public class Role : EntityBase
     {
         [Required]
-        [StringLength(5, ErrorMessage = "Valuta može sadržavati maksimalno 5 znakova.")]
+        [StringLength(50, ErrorMessage = "Naziv može sadržavati maksimalno 50 znakova.")]
         public string Name { get; set; }
 
-        public virtual ICollection<ExchangeRate> ExchangeRates { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }
