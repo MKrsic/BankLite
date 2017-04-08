@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankLite.Web", "BankLite.Web\BankLite.Web.csproj", "{2DB7D21F-1491-4A3C-98EB-96BD9B8D71CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankLite.Data", "BankLite.Data\BankLite.Data.csproj", "{753B0F5A-FFD5-4048-BDF6-1D9C12249379}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankLite.Model", "BankLite.Model\BankLite.Model.csproj", "{B4711F40-B291-478D-9461-B7D8FF60A15A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2DB7D21F-1491-4A3C-98EB-96BD9B8D71CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DB7D21F-1491-4A3C-98EB-96BD9B8D71CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DB7D21F-1491-4A3C-98EB-96BD9B8D71CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DB7D21F-1491-4A3C-98EB-96BD9B8D71CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{753B0F5A-FFD5-4048-BDF6-1D9C12249379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{753B0F5A-FFD5-4048-BDF6-1D9C12249379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{753B0F5A-FFD5-4048-BDF6-1D9C12249379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{753B0F5A-FFD5-4048-BDF6-1D9C12249379}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4711F40-B291-478D-9461-B7D8FF60A15A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4711F40-B291-478D-9461-B7D8FF60A15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4711F40-B291-478D-9461-B7D8FF60A15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4711F40-B291-478D-9461-B7D8FF60A15A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
