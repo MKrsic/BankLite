@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BankLite.Data;
+using BankLite.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,6 +13,9 @@ namespace BankLite.Web.Controllers
         // GET: User/Transactions
         public ActionResult Index()
         {
+            var context = new BankLiteDbContext();
+            var transactions = context.Transaction.ToList();
+            context.Dispose();
             return View();
         }
     }
