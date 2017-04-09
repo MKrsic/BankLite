@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace BankLite.Web.Areas.User.Controllers
+namespace BankLite.Web.Controllers
 {
     public class TransactionsController : Controller
     {
