@@ -30,12 +30,14 @@ namespace BankLite.Data.Repository
 
         public void Add(UserData model)
         {
+            model.CreatedAt = DateTime.Now;
             this.DbContext.UserData.Add(model);
             this.DbContext.SaveChanges();
         }
 
         public void Update(UserData model)
         {
+            model.UpdatedAt = DateTime.Now;
             this.DbContext.Entry(model).State = EntityState.Modified;
             this.DbContext.SaveChanges();
         }

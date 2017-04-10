@@ -21,12 +21,14 @@ namespace BankLite.Data.Repository
 
         public void Add(TEntity model)
         {
+            model.CreatedAt = DateTime.Now;
             this.DbContext.Set<TEntity>().Add(model);
             this.DbContext.SaveChanges();
         }
 
         public void Update(TEntity model)
         {
+            model.UpdatedAt = DateTime.Now;
             this.DbContext.Entry(model).State = EntityState.Modified;
             this.DbContext.SaveChanges();
         }
