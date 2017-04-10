@@ -227,3 +227,6 @@ BankLite.Web/packages/jQuery.Validation.1.16.0/Content/Scripts/jquery.validate-v
 BankLite.Web/packages/jQuery.Validation.1.16.0/Content/Scripts/jquery.validate.js
 BankLite.Web/packages/jQuery.Validation.1.16.0/Content/Scripts/jquery.validate.min.js
 BankLite.Web/packages/jQuery.Validation.1.16.0/jQuery.Validation.1.16.0.nupkg
+/BankLite.Web/BankLite.Data/bin/Debug
+/BankLite.Web/packages
+/BankLite.Web/BankLite.Web/BankLite.Web.csproj.orig
