@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<BankLite.Model.AccountType>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Tipovi računa";
 }
 
-<h2>Index</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -14,12 +14,6 @@
         <th>
             @Html.DisplayNameFor(model => model.Type)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UpdatedAt)
-        </th>
         <th></th>
     </tr>
 
@@ -27,12 +21,6 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UpdatedAt)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |

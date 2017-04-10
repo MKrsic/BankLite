@@ -317,6 +317,7 @@
     <Content Include="Views\BankAccounts\Details.cshtml" />
     <Content Include="Views\BankAccounts\Edit.cshtml" />
     <Content Include="Views\BankAccounts\Index.cshtml" />
+    <Content Include="Views\AccountTypes\_CreateOrEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

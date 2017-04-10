@@ -8,17 +8,18 @@ using System.Web;
 using System.Web.Mvc;
 using BankLite.Data;
 using BankLite.Model;
+using BankLite.Data.Repository;
 
 namespace BankLite.Web.Controllers
 {
     public class AccountTypesController : Controller
     {
-        private BankLiteDbContext db = new BankLiteDbContext();
+        private AccountTypeRepository AccountTypeRepository = new AccountTypeRepository();
 
         // GET: AccountTypes
         public ActionResult Index()
         {
-            return View(db.AccountType.ToList());
+            return View(AccountTypeRepository.GetList());
         }
 
         // GET: AccountTypes/Details/5
@@ -28,7 +29,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AccountType accountType = db.AccountType.Find(id);
+            AccountType accountType = AccountTypeRepository.Find(id.Value);
             if (accountType == null)
             {
                 return HttpNotFound();
@@ -47,12 +48,11 @@ namespace BankLite.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Type,CreatedAt,UpdatedAt")] AccountType accountType)
+        public ActionResult Create([Bind(Include = "Type")] AccountType accountType)
         {
             if (ModelState.IsValid)
             {
-                db.AccountType.Add(accountType);
-                db.SaveChanges();
+                AccountTypeRepository.Add(accountType);
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +66,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AccountType accountType = db.AccountType.Find(id);
+            AccountType accountType = AccountTypeRepository.Find(id.Value);
             if (accountType == null)
             {
                 return HttpNotFound();
@@ -79,14 +79,15 @@ namespace BankLite.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Type,CreatedAt,UpdatedAt")] AccountType accountType)
+        public ActionResult Edit([Bind(Include = "ID,Type")] AccountType accountType)
         {
-            if (ModelState.IsValid)
+            bool isOk = TryUpdateModel(accountType);
+            if (ModelState.IsValid && isOk)
             {
-                db.Entry(accountType).State = EntityState.Modified;
-                db.SaveChanges();
+                AccountTypeRepository.Update(accountType);
                 return RedirectToAction("Index");
             }
+
             return View(accountType);
         }
 
@@ -97,7 +98,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            AccountType accountType = db.AccountType.Find(id);
+            AccountType accountType = AccountTypeRepository.Find(id.Value);
             if (accountType == null)
             {
                 return HttpNotFound();
@@ -110,17 +111,19 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            AccountType accountType = db.AccountType.Find(id);
-            db.AccountType.Remove(accountType);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            AccountType accountType = AccountTypeRepository.Find(id);
+            bool ok = AccountTypeRepository.Delete(id);
+            if (ok)
+                return RedirectToAction("Index");
+            else
+                return RedirectToAction("Delete", id);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                AccountTypeRepository.Dispose();
             }
             base.Dispose(disposing);
         }

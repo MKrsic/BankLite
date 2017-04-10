@@ -13,6 +13,7 @@ namespace BankLite.Model
     {
         [Required]
         [StringLength(100, ErrorMessage = "Tip računa može sadržavati maksimalno 100 znakova.")]
+        [Display(Name = " Tip računa")]
         public string Type { get; set; }
 
         public virtual ICollection<BankAccount> BankAccounts { get; set; }
