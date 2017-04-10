@@ -13,7 +13,7 @@ namespace BankLite.Model
     {
         [Required]
         [ForeignKey("Currency")]
-        public int Currecy_ID { get; set; }
+        public int Currency_ID { get; set; }
         [Required]
         public decimal Value { get; set; }
 
