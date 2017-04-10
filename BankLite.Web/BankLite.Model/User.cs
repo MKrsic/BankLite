@@ -24,5 +24,6 @@ namespace BankLite.Model
         public virtual Role Role { get; set; }
 
         public virtual UserData UserData { get; set; }
+        public virtual ICollection<BankAccount> BankAccounts { get; set; }
     }
 }

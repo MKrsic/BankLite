@@ -14,7 +14,11 @@ namespace BankLite.Model
         [Required]
         [ForeignKey("AccountType")]
         public int AccountType_ID { get; set; }
+        [Required]
+        [ForeignKey("User")]
+        public int User_ID { get; set; }
 
         public virtual AccountType AccountType { get; set; }
+        public virtual User User { get; set; }
     }
 }
