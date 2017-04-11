@@ -10,7 +10,16 @@ namespace BankLite.Data.Repository
 {
     public class BankAccountRepository : RepositoryBase<BankAccount>
     {
-        public List<BankAccount> GetList()
+        public List<BankAccount> GetList(int user_ID)
+        {
+            return this.DbContext.BankAccount
+                .Include(b => b.AccountType)
+                .Where(b => b.User_ID == user_ID)
+                .OrderBy(b => b.ID)
+                .ToList();
+        }
+
+        public List<BankAccount> GetList(bool admin)
         {
             return this.DbContext.BankAccount
                 .Include(b => b.AccountType)

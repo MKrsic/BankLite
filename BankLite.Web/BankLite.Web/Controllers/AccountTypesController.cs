@@ -111,7 +111,6 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            AccountType accountType = AccountTypeRepository.Find(id);
             bool ok = AccountTypeRepository.Delete(id);
             if (ok)
                 return RedirectToAction("Index");

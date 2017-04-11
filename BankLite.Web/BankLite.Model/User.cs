@@ -17,7 +17,7 @@ namespace BankLite.Model
         [ForeignKey("Role")]
         public int Role_ID { get; set; }
         [Required]
-        public byte PasswordHash { get; set; }
+        public byte[] PasswordHash { get; set; }
         [Required]
         public bool Active { get; set; }
 

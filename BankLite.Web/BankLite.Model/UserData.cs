@@ -27,6 +27,15 @@ namespace BankLite.Model
         [Required]
         public DateTime DateOfBirth { get; set; }
         [Required]
+        [StringLength(100, ErrorMessage = "Email može sadržavati maksimalno 100 znakova.")]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+        [Required]
+        [StringLength(15, ErrorMessage = "Tel. mora sadržavati maksimalno 15, a minimalno 7 znakova.", MinimumLength = 7)]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "Tel. može sadržavati samo znamenke od 0 do 9.")]
+        [Display(Name = "Tel.")]
+        public string Telephone { get; set; }
+        [Required]
         public DateTime CreatedAt { get; set; }
         public Nullable<DateTime> UpdatedAt { get; set; }
 

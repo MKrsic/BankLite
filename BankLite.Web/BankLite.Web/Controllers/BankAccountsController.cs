@@ -8,18 +8,21 @@ using System.Web;
 using System.Web.Mvc;
 using BankLite.Data;
 using BankLite.Model;
+using BankLite.Data.Repository;
+using BankLite.Web.Extensions;
 
 namespace BankLite.Web.Controllers
 {
     public class BankAccountsController : Controller
     {
-        private BankLiteDbContext db = new BankLiteDbContext();
+        private BankAccountRepository BankAccountRepository = new BankAccountRepository();
+        private UserRepository UserRepository = new UserRepository();
+        private AccountTypeRepository AccountTypeRepository = new AccountTypeRepository();
 
         // GET: BankAccounts
         public ActionResult Index()
         {
-            var bankAccount = db.BankAccount.Include(b => b.AccountType).Include(b => b.User);
-            return View(bankAccount.ToList());
+            return View(BankAccountRepository.GetList(User.Identity.GetUser_ID()));
         }
 
         // GET: BankAccounts/Details/5
@@ -29,7 +32,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BankAccount bankAccount = db.BankAccount.Find(id);
+            BankAccount bankAccount = BankAccountRepository.Find(id.Value);
             if (bankAccount == null)
             {
                 return HttpNotFound();
@@ -40,8 +43,8 @@ namespace BankLite.Web.Controllers
         // GET: BankAccounts/Create
         public ActionResult Create()
         {
-            ViewBag.AccountType_ID = new SelectList(db.AccountType, "ID", "Type");
-            ViewBag.User_ID = new SelectList(db.User, "ID", "UserName");
+            ViewBag.AccountType_ID = new SelectList(AccountTypeRepository.GetList(), "ID", "Type");
+            ViewBag.User_ID = new SelectList(UserRepository.GetList(), "ID", "UserName");
             return View();
         }
 
@@ -50,17 +53,16 @@ namespace BankLite.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AccountType_ID,User_ID,CreatedAt,UpdatedAt")] BankAccount bankAccount)
+        public ActionResult Create([Bind(Include = "AccountType_ID")] BankAccount bankAccount)
         {
             if (ModelState.IsValid)
             {
-                db.BankAccount.Add(bankAccount);
-                db.SaveChanges();
+                BankAccountRepository.Add(bankAccount);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AccountType_ID = new SelectList(db.AccountType, "ID", "Type", bankAccount.AccountType_ID);
-            ViewBag.User_ID = new SelectList(db.User, "ID", "UserName", bankAccount.User_ID);
+            ViewBag.AccountType_ID = new SelectList(AccountTypeRepository.GetList(), "ID", "Type", bankAccount.AccountType_ID);
+            ViewBag.User_ID = new SelectList(UserRepository.GetList(), "ID", "UserName", bankAccount.User_ID);
             return View(bankAccount);
         }
 
@@ -71,13 +73,13 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BankAccount bankAccount = db.BankAccount.Find(id);
+            BankAccount bankAccount = BankAccountRepository.Find(id.Value);
             if (bankAccount == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.AccountType_ID = new SelectList(db.AccountType, "ID", "Type", bankAccount.AccountType_ID);
-            ViewBag.User_ID = new SelectList(db.User, "ID", "UserName", bankAccount.User_ID);
+            ViewBag.AccountType_ID = new SelectList(AccountTypeRepository.GetList(), "ID", "Type", bankAccount.AccountType_ID);
+            ViewBag.User_ID = new SelectList(UserRepository.GetList(), "ID", "UserName", bankAccount.User_ID);
             return View(bankAccount);
         }
 
@@ -86,16 +88,16 @@ namespace BankLite.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AccountType_ID,User_ID,CreatedAt,UpdatedAt")] BankAccount bankAccount)
+        public ActionResult Edit([Bind(Include = "ID,AccountType_ID")] BankAccount bankAccount)
         {
-            if (ModelState.IsValid)
+            bool isOk = TryUpdateModel(bankAccount);
+            if (ModelState.IsValid && isOk)
             {
-                db.Entry(bankAccount).State = EntityState.Modified;
-                db.SaveChanges();
+                BankAccountRepository.Update(bankAccount);
                 return RedirectToAction("Index");
             }
-            ViewBag.AccountType_ID = new SelectList(db.AccountType, "ID", "Type", bankAccount.AccountType_ID);
-            ViewBag.User_ID = new SelectList(db.User, "ID", "UserName", bankAccount.User_ID);
+            ViewBag.AccountType_ID = new SelectList(AccountTypeRepository.GetList(), "ID", "Type", bankAccount.AccountType_ID);
+            ViewBag.User_ID = new SelectList(UserRepository.GetList(), "ID", "UserName", bankAccount.User_ID);
             return View(bankAccount);
         }
 
@@ -106,7 +108,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BankAccount bankAccount = db.BankAccount.Find(id);
+            BankAccount bankAccount = BankAccountRepository.Find(id.Value);
             if (bankAccount == null)
             {
                 return HttpNotFound();
@@ -119,17 +121,18 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            BankAccount bankAccount = db.BankAccount.Find(id);
-            db.BankAccount.Remove(bankAccount);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            bool ok = BankAccountRepository.Delete(id);
+            if (ok)
+                return RedirectToAction("Index");
+            else
+                return RedirectToAction("Delete", id);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                BankAccountRepository.Dispose();
             }
             base.Dispose(disposing);
         }
