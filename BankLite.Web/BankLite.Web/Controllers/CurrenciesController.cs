@@ -8,17 +8,18 @@ using System.Web;
 using System.Web.Mvc;
 using BankLite.Data;
 using BankLite.Model;
+using BankLite.Data.Repository;
 
 namespace BankLite.Web.Controllers
 {
     public class CurrenciesController : Controller
     {
-        private BankLiteDbContext db = new BankLiteDbContext();
+        private CurrencyRepository CurrencyRepository = new CurrencyRepository();
 
         // GET: Currencies
         public ActionResult Index()
         {
-            return View(db.Currency.ToList());
+            return View(CurrencyRepository.GetList());
         }
 
         // GET: Currencies/Details/5
@@ -28,7 +29,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Currency currency = db.Currency.Find(id);
+            Currency currency = CurrencyRepository.Find(id.Value);
             if (currency == null)
             {
                 return HttpNotFound();
@@ -47,12 +48,11 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name,CreatedAt,UpdatedAt")] Currency currency)
+        public ActionResult Create([Bind(Include = "Name")] Currency currency)
         {
             if (ModelState.IsValid)
             {
-                db.Currency.Add(currency);
-                db.SaveChanges();
+                CurrencyRepository.Add(currency);
                 return RedirectToAction("Index");
             }
 
@@ -66,7 +66,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Currency currency = db.Currency.Find(id);
+            Currency currency = CurrencyRepository.Find(id.Value);
             if (currency == null)
             {
                 return HttpNotFound();
@@ -79,12 +79,13 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,CreatedAt,UpdatedAt")] Currency currency)
+        public ActionResult Edit([Bind(Include = "ID,Name")] Currency currency)
         {
-            if (ModelState.IsValid)
+            var model = CurrencyRepository.Find(currency.ID);
+            bool isOk = TryUpdateModel(model);
+            if (ModelState.IsValid && isOk)
             {
-                db.Entry(currency).State = EntityState.Modified;
-                db.SaveChanges();
+                CurrencyRepository.Update(model);
                 return RedirectToAction("Index");
             }
             return View(currency);
@@ -97,7 +98,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Currency currency = db.Currency.Find(id);
+            Currency currency = CurrencyRepository.Find(id.Value);
             if (currency == null)
             {
                 return HttpNotFound();
@@ -110,17 +111,19 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Currency currency = db.Currency.Find(id);
-            db.Currency.Remove(currency);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            Currency currency = CurrencyRepository.Find(id);
+            bool ok = CurrencyRepository.Delete(id);
+            if (ok)
+                return RedirectToAction("Index");
+            else
+                return RedirectToAction("Delete", id);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                CurrencyRepository.Dispose();
             }
             base.Dispose(disposing);
         }

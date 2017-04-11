@@ -13,6 +13,7 @@ namespace BankLite.Model
     {
         [Required]
         [StringLength(5, ErrorMessage = "Valuta može sadržavati maksimalno 5 znakova.")]
+        [Display(Name = "Naziv")]
         public string Name { get; set; }
 
         public virtual ICollection<ExchangeRate> ExchangeRates { get; set; }
