@@ -323,6 +323,7 @@
     <Content Include="Views\AccountTypes\_CreateOrEdit.cshtml" />
     <Content Include="Views\BankAccounts\_CreateOrEdit.cshtml" />
     <Content Include="Views\Currencies\_CreateOrEdit.cshtml" />
+    <Content Include="Views\ExchangeRates\_CreateOrEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

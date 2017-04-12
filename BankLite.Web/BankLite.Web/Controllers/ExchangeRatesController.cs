@@ -8,18 +8,19 @@ using System.Web;
 using System.Web.Mvc;
 using BankLite.Data;
 using BankLite.Model;
+using BankLite.Data.Repository;
 
 namespace BankLite.Web.Controllers
 {
     public class ExchangeRatesController : Controller
     {
-        private BankLiteDbContext db = new BankLiteDbContext();
+        //private BankLiteDbContext db = new BankLiteDbContext();
+        private ExchangeRateRepository ExchangeRateRepository = new ExchangeRateRepository();
 
         // GET: ExchangeRates
         public ActionResult Index()
         {
-            var exchangeRate = db.ExchangeRate.Include(e => e.Currency);
-            return View(exchangeRate.ToList());
+            return View(ExchangeRateRepository.GetList());
         }
 
         // GET: ExchangeRates/Details/5
@@ -29,7 +30,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ExchangeRate exchangeRate = db.ExchangeRate.Find(id);
+            ExchangeRate exchangeRate = ExchangeRateRepository.Find(id.Value);
             if (exchangeRate == null)
             {
                 return HttpNotFound();
@@ -40,7 +41,7 @@ namespace BankLite.Web.Controllers
         // GET: ExchangeRates/Create
         public ActionResult Create()
         {
-            ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name");
+            //ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name");
             return View();
         }
 
@@ -49,16 +50,15 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Currency_ID,Value,CreatedAt,UpdatedAt")] ExchangeRate exchangeRate)
+        public ActionResult Create([Bind(Include = "ID,Currency_ID,Value")] ExchangeRate exchangeRate)
         {
             if (ModelState.IsValid)
             {
-                db.ExchangeRate.Add(exchangeRate);
-                db.SaveChanges();
+                ExchangeRateRepository.Add(exchangeRate);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name", exchangeRate.Currency_ID);
+            //ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name", exchangeRate.Currency_ID);
             return View(exchangeRate);
         }
 
@@ -69,12 +69,12 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ExchangeRate exchangeRate = db.ExchangeRate.Find(id);
+            ExchangeRate exchangeRate = ExchangeRateRepository.Find(id.Value);
             if (exchangeRate == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name", exchangeRate.Currency_ID);
+            //ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name", exchangeRate.Currency_ID);
             return View(exchangeRate);
         }
 
@@ -83,15 +83,15 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Currency_ID,Value,CreatedAt,UpdatedAt")] ExchangeRate exchangeRate)
+        public ActionResult Edit([Bind(Include = "ID,Currency_ID,Value")] ExchangeRate exchangeRate)
         {
-            if (ModelState.IsValid)
+            var model = ExchangeRateRepository.Find(exchangeRate.ID);
+            bool isOk = TryUpdateModel(model);
+            if (ModelState.IsValid && isOk)
             {
-                db.Entry(exchangeRate).State = EntityState.Modified;
-                db.SaveChanges();
+                ExchangeRateRepository.Update(model);
                 return RedirectToAction("Index");
             }
-            ViewBag.Currency_ID = new SelectList(db.Currency, "ID", "Name", exchangeRate.Currency_ID);
             return View(exchangeRate);
         }
 
@@ -102,7 +102,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ExchangeRate exchangeRate = db.ExchangeRate.Find(id);
+            ExchangeRate exchangeRate = ExchangeRateRepository.Find(id.Value);
             if (exchangeRate == null)
             {
                 return HttpNotFound();
@@ -115,19 +115,22 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            ExchangeRate exchangeRate = db.ExchangeRate.Find(id);
-            db.ExchangeRate.Remove(exchangeRate);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            ExchangeRate exchangeRate = ExchangeRateRepository.Find(id);
+            bool ok = ExchangeRateRepository.Delete(id);
+            if (ok)
+                return RedirectToAction("Index");
+            else
+                return RedirectToAction("Delete", id);
         }
+    
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+            ExchangeRateRepository.Dispose();
             }
-            base.Dispose(disposing);
+        base.Dispose(disposing);
         }
     }
 }
