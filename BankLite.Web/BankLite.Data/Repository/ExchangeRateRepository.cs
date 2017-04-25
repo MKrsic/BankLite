@@ -25,5 +25,13 @@ namespace BankLite.Data.Repository
                 .Where(e => e.ID == id)
                 .FirstOrDefault();
         }
+        public ExchangeRate FindLast()
+        {
+            return this.DbContext.ExchangeRate
+                .Include(e => e.Currency)
+                .Where(e => e.Currency_ID == 2)
+                .OrderByDescending(e => e.ID)
+                .FirstOrDefault();
+        }
     }
 }

@@ -60,5 +60,34 @@ namespace BankLite.Data.Repository
                 return "Dogodila se greška";
             }
         }
+        public string AddUser(string username, string password)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["BankLiteDbContext"].ConnectionString))
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "dbo.AddUser";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("UserName", username);
+                    cmd.Parameters.AddWithValue("Password", password);
+                    cmd.Parameters.AddWithValue("Role_ID", 1);
+                    //SqlParameter output = new SqlParameter("@responseMessage", SqlDbType.NVarChar);
+                    //output.Direction = ParameterDirection.Output;
+                    //cmd.Parameters.Add(output);
+                    var returnParameter = cmd.Parameters.Add("@responseMessage", SqlDbType.NVarChar, 250);
+                    returnParameter.Direction = ParameterDirection.Output;
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    var result = returnParameter.Value;
+                    return result.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                return "Dogodila se greška";
+            }
+        }
     }
 }

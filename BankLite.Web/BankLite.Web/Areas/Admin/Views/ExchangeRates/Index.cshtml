@@ -1,0 +1,65 @@
+﻿@model IEnumerable<BankLite.Model.ExchangeRate>
+
+@{
+    ViewBag.Title = "Tečaji";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    <button id="btnTecaj" class="btn btn-default" onclick="dohvatiTecaj()">Dohvati tečaj</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Currency.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Value)
+        </th>
+        <th>
+            <label for="CreatedAt">Datum</label>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Currency.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { id = item.ID }) |*@
+                @Html.ActionLink("Details", "Details", new { id = item.ID })
+                @*@Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section scripts{
+    <script type="text/javascript">
+        function dohvatiTecaj() {
+            $.ajax({
+                url: '@Url.Action("DohvatiTecaj")',
+                method: "POST",
+                success: function (data) {
+                    if (data == 'ok') {
+                        alert('Dohvaćanje uspješno!');
+                    }
+                    else {
+                        alert(data);
+                    }
+                }
+            });
+        }
+    </script>
+}

@@ -8,17 +8,23 @@ using System.Web;
 using System.Web.Mvc;
 using BankLite.Data;
 using BankLite.Model;
+using BankLite.Data.Repository;
+using BankLite.Web.Extensions;
 
 namespace BankLite.Web.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
-        private BankLiteDbContext db = new BankLiteDbContext();
+        private TransactionRepository TransactionRepository = new TransactionRepository();
+        private BankAccountRepository BankAccountRepository = new BankAccountRepository();
+        private ExchangeRateRepository ExchangeRateRepository = new ExchangeRateRepository();
 
         // GET: Transactions
         public ActionResult Index()
         {
-            var transaction = db.Transaction.Include(t => t.ExchangeRate);
+            string IBAN = BankAccountRepository.FindIBAN(User.Identity.GetUser_ID());
+            var transaction = TransactionRepository.GetList(IBAN);
             return View(transaction.ToList());
         }
 
@@ -29,7 +35,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Transaction transaction = db.Transaction.Find(id);
+            Transaction transaction = TransactionRepository.Find(id.Value);
             if (transaction == null)
             {
                 return HttpNotFound();
@@ -40,7 +46,9 @@ namespace BankLite.Web.Controllers
         // GET: Transactions/Create
         public ActionResult Create()
         {
-            ViewBag.ExchangeRate_ID = new SelectList(db.ExchangeRate, "ID", "ID");
+            ViewBag.ExchangeRate_ID = new SelectList(ExchangeRateRepository.GetList(), "ID", "ID");
+            ViewBag.BankAccount_From = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID()), "IBAN", "IBAN");
+            ViewBag.BankAccount_To = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID(), true), "IBAN", "IBAN");
             return View();
         }
 
@@ -49,16 +57,32 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,BankAccount_From,BankAccount_To,Amount,ExchangeRate_ID,CreatedAt,UpdatedAt")] Transaction transaction)
+        public ActionResult Create([Bind(Include = "BankAccount_From,BankAccount_To,Amount")] Transaction transaction)
         {
+            transaction.ExchangeRate_ID = ExchangeRateRepository.FindLast().ID;
             if (ModelState.IsValid)
             {
-                db.Transaction.Add(transaction);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                BankAccount bankAccount = new BankAccount();
+                BankAccount bankAccount_To = new BankAccount();
+                bankAccount = BankAccountRepository.Find(transaction.BankAccount_From);
+                bankAccount_To = BankAccountRepository.Find(transaction.BankAccount_To);
+                if (bankAccount != null && bankAccount_To != null && bankAccount.MoneyAmount >= transaction.Amount)
+                {
+                    TransactionRepository.Add(transaction);
+                    bankAccount.MoneyAmount = bankAccount.MoneyAmount - transaction.Amount;
+                    BankAccountRepository.Update(bankAccount);
+                    bankAccount_To.MoneyAmount = bankAccount_To.MoneyAmount + transaction.Amount;
+                    BankAccountRepository.Update(bankAccount_To);
+                    return RedirectToAction("Index");
+                }
+                ViewBag.BankAccount_From = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID()), "IBAN", "IBAN", transaction.BankAccount_From);
+                ViewBag.BankAccount_To = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID(), true), "IBAN", "IBAN", transaction.BankAccount_To);
+                ViewBag.ExchangeRate_ID = new SelectList(ExchangeRateRepository.GetList(), "ID", "ID", transaction.ExchangeRate_ID);
+                return View(transaction);
             }
-
-            ViewBag.ExchangeRate_ID = new SelectList(db.ExchangeRate, "ID", "ID", transaction.ExchangeRate_ID);
+            ViewBag.BankAccount_From = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID()), "IBAN", "IBAN", transaction.BankAccount_From);
+            ViewBag.BankAccount_To = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID(), true), "IBAN", "IBAN", transaction.BankAccount_To);
+            ViewBag.ExchangeRate_ID = new SelectList(ExchangeRateRepository.GetList(), "ID", "ID", transaction.ExchangeRate_ID);
             return View(transaction);
         }
 
@@ -69,12 +93,14 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Transaction transaction = db.Transaction.Find(id);
+            Transaction transaction = TransactionRepository.Find(id.Value);
             if (transaction == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ExchangeRate_ID = new SelectList(db.ExchangeRate, "ID", "ID", transaction.ExchangeRate_ID);
+            ViewBag.BankAccount_From = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID()), "IBAN", "IBAN");
+            ViewBag.BankAccount_To = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID(), true), "IBAN", "IBAN");
+            ViewBag.ExchangeRate_ID = new SelectList(ExchangeRateRepository.GetList(), "ID", "ID", transaction.ExchangeRate_ID);
             return View(transaction);
         }
 
@@ -83,15 +109,19 @@ namespace BankLite.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,BankAccount_From,BankAccount_To,Amount,ExchangeRate_ID,CreatedAt,UpdatedAt")] Transaction transaction)
+        public ActionResult Edit([Bind(Include = "ID,BankAccount_From,BankAccount_To,Amount")] Transaction transaction)
         {
-            if (ModelState.IsValid)
+            transaction.ExchangeRate_ID = 1;
+            var model = TransactionRepository.Find(transaction.ID);
+            bool isOk = TryUpdateModel(model);
+            if (ModelState.IsValid && isOk)
             {
-                db.Entry(transaction).State = EntityState.Modified;
-                db.SaveChanges();
+                TransactionRepository.Update(model);
                 return RedirectToAction("Index");
             }
-            ViewBag.ExchangeRate_ID = new SelectList(db.ExchangeRate, "ID", "ID", transaction.ExchangeRate_ID);
+            ViewBag.BankAccount_From = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID()), "IBAN", "IBAN", transaction.BankAccount_From);
+            ViewBag.BankAccount_To = new SelectList(BankAccountRepository.GetList(User.Identity.GetUser_ID(), true), "IBAN", "IBAN", transaction.BankAccount_To);
+            ViewBag.ExchangeRate_ID = new SelectList(ExchangeRateRepository.GetList(), "ID", "ID", transaction.ExchangeRate_ID);
             return View(transaction);
         }
 
@@ -102,7 +132,7 @@ namespace BankLite.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Transaction transaction = db.Transaction.Find(id);
+            Transaction transaction = TransactionRepository.Find(id.Value);
             if (transaction == null)
             {
                 return HttpNotFound();
@@ -115,17 +145,18 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Transaction transaction = db.Transaction.Find(id);
-            db.Transaction.Remove(transaction);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            bool ok = TransactionRepository.Delete(id);
+            if (ok)
+                return RedirectToAction("Index");
+            else
+                return RedirectToAction("Delete", id);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                TransactionRepository.Dispose();
             }
             base.Dispose(disposing);
         }

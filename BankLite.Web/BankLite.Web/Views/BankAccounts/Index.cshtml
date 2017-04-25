@@ -14,6 +14,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.AccountType.Type)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MoneyAmount)
+            </th>
             <th></th>
         </tr>
 
@@ -24,9 +27,10 @@
                     @Html.DisplayFor(modelItem => item.AccountType.Type)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                    @Html.DisplayFor(modelItem => item.MoneyAmount)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.ID })
                 </td>
             </tr>
         }

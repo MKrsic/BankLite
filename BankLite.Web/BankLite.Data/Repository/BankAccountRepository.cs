@@ -10,6 +10,14 @@ namespace BankLite.Data.Repository
 {
     public class BankAccountRepository : RepositoryBase<BankAccount>
     {
+        public List<BankAccount> GetList(int user_ID, bool transakcija)
+        {
+            return this.DbContext.BankAccount
+                .Include(b => b.AccountType)
+                .Where(b => b.User_ID != user_ID)
+                .OrderBy(b => b.ID)
+                .ToList();
+        }
         public List<BankAccount> GetList(int user_ID)
         {
             return this.DbContext.BankAccount
@@ -33,6 +41,21 @@ namespace BankLite.Data.Repository
                 .Include(b => b.AccountType)
                 .Where(b => b.ID == id)
                 .FirstOrDefault();
+        }
+
+        public BankAccount Find(string IBAN)
+        {
+            return this.DbContext.BankAccount
+                .Include(b => b.AccountType)
+                .Where(b => b.IBAN == IBAN)
+                .FirstOrDefault();
+        }
+
+        public string FindIBAN(int id)
+        {
+            return this.DbContext.BankAccount
+                .Where(b => b.User_ID == id)
+                .FirstOrDefault()?.IBAN;
         }
     }
 }

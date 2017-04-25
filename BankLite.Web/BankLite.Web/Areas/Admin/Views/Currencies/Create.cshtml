@@ -1,0 +1,21 @@
+﻿@model BankLite.Model.Currency
+
+@{
+    ViewBag.Title = "Novi zapis";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@using (Html.BeginForm()) 
+{
+  @Html.Partial("_CreateOrEdit")
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

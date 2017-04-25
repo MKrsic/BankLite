@@ -12,6 +12,7 @@ using BankLite.Data.Repository;
 
 namespace BankLite.Web.Controllers
 {
+    [Authorize]
     public class ExchangeRatesController : Controller
     {
         //private BankLiteDbContext db = new BankLiteDbContext();

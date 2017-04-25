@@ -13,6 +13,7 @@ using BankLite.Web.Extensions;
 
 namespace BankLite.Web.Controllers
 {
+    [Authorize]
     public class BankAccountsController : Controller
     {
         private BankAccountRepository BankAccountRepository = new BankAccountRepository();
@@ -55,6 +56,15 @@ namespace BankLite.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "AccountType_ID")] BankAccount bankAccount)
         {
+            Random rnd = new Random();
+            string iban = "HR";
+            for (int i = 0; i < 19; i++) {
+                int random = rnd.Next(0, 9);
+                iban += random.ToString();
+            }
+            bankAccount.IBAN = iban;
+            bankAccount.MoneyAmount = 0;
+            bankAccount.User_ID = User.Identity.GetUser_ID();
             if (ModelState.IsValid)
             {
                 BankAccountRepository.Add(bankAccount);

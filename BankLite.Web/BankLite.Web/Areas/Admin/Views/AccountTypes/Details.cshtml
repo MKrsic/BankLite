@@ -1,0 +1,26 @@
+﻿@model BankLite.Model.AccountType
+
+@{
+    ViewBag.Title = "Detalji";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <h4>Tip računa</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

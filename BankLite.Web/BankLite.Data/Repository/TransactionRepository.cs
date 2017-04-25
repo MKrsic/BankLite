@@ -18,6 +18,15 @@ namespace BankLite.Data.Repository
                 .ToList();
         }
 
+        public List<Transaction> GetList(string IBAN)
+        {
+            return this.DbContext.Transaction
+                .Include(t => t.ExchangeRate)
+                .Where(t => t.BankAccount_From == IBAN)
+                .OrderBy(t => t.ID)
+                .ToList();
+        }
+
         public override Transaction Find(int id)
         {
             return this.DbContext.Transaction

@@ -81,7 +81,6 @@ namespace BankLite.Web.Models
         //public string ConfirmPassword { get; set; }
 
         [Required]
-        [EmailAddress]
         [Display(Name = "Korisničko ime")]
         public string UserName { get; set; }
 
@@ -116,6 +115,7 @@ namespace BankLite.Web.Models
         [RegularExpression("^[0-9]*$", ErrorMessage = "OIB može sadržavati samo znamenke od 0 do 9.")]
         public string OIB { get; set; }
         [Required]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy}")]
         public DateTime DateOfBirth { get; set; }
     }
 

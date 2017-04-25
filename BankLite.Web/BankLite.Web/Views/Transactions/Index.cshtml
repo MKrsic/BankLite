@@ -7,36 +7,30 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Nova transakcija", "Create")
 </p>
 <table class="table">
     <tr>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.ExchangeRate.ID)
+        </th>*@
+        <th>
+            <label for="BankAccount_From">S računa</label>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.BankAccount_From)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.BankAccount_To)
+            <label for="BankAccount_To">Na račun</label>
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Amount)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UpdatedAt)
         </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.ExchangeRate.ID)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.BankAccount_From)
         </td>
@@ -47,15 +41,7 @@
             @Html.DisplayFor(modelItem => item.Amount)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.CreatedAt)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UpdatedAt)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @Html.ActionLink("Details", "Details", new { id=item.ID })
         </td>
     </tr>
 }

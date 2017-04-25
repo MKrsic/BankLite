@@ -85,6 +85,10 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -197,6 +201,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\AccountTypesController.cs" />
+    <Compile Include="Areas\Admin\Controllers\CurrenciesController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ExchangeRatesController.cs" />
+    <Compile Include="Areas\Admin\Controllers\TransactionsAdminController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\ExchangeRatesController.cs" />
@@ -236,6 +244,32 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Currencies\_CreateOrEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\ExchangeRates\_CreateOrEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\AccountTypes\_CreateOrEdit.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\Delete.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\Edit.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\TransactionsAdmin\_CreateOrEdit.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -324,12 +358,11 @@
     <Content Include="Views\BankAccounts\_CreateOrEdit.cshtml" />
     <Content Include="Views\Currencies\_CreateOrEdit.cshtml" />
     <Content Include="Views\ExchangeRates\_CreateOrEdit.cshtml" />
+    <Content Include="Views\Transactions\_CreateOrEdit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\Admin\Controllers\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Areas\Admin\Views\Shared\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>

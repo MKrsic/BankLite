@@ -19,6 +19,7 @@ namespace BankLite.Model
         public int User_ID { get; set; }
         [Display(Name = "Iznos")]
         public decimal MoneyAmount { get; set; }
+        public string IBAN { get; set; }
 
         public virtual AccountType AccountType { get; set; }
         public virtual User User { get; set; }

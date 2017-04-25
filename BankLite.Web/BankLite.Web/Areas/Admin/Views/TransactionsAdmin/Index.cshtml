@@ -1,0 +1,46 @@
+﻿@model IEnumerable<BankLite.Model.Transaction>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Transakcije</h2>
+
+<table class="table">
+    <tr>
+        @*<th>
+            @Html.DisplayNameFor(model => model.ExchangeRate.ID)
+        </th>*@
+        <th>
+            <label for="BankAccount_From">S računa</label>
+        </th>
+        <th>
+            <label for="BankAccount_To">Na račun</label>
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Amount)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.ExchangeRate.ID)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.BankAccount_From)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BankAccount_To)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

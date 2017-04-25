@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace BankLite.Model
 {
-    [Table("Transaction")]
+    [Table("Transactions")]
     public class Transaction : EntityBase
     {
         [Required]
-        public int BankAccount_From { get; set; }
+        public string BankAccount_From { get; set; }
         [Required]
-        public int BankAccount_To { get; set; }
+        public string BankAccount_To { get; set; }
         [Required]
+        [Display(Name ="Iznos")]
         public decimal Amount { get; set; }
         [ForeignKey("ExchangeRate")]
         public int ExchangeRate_ID { get; set; }

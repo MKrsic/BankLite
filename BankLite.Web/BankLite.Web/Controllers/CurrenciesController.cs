@@ -12,6 +12,7 @@ using BankLite.Data.Repository;
 
 namespace BankLite.Web.Controllers
 {
+    [Authorize]
     public class CurrenciesController : Controller
     {
         private CurrencyRepository CurrencyRepository = new CurrencyRepository();

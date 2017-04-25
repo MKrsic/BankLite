@@ -115,7 +115,7 @@ namespace BankLite.Web.Controllers
               new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
 
               new Claim(ClaimTypes.Name,appUser.UserName),
-              //new Claim("User_ID", appUser.User_ID.ToString()),
+              new Claim("User_ID", appUser.User_ID.ToString()),
 
               // optionally you could add roles if any
               new Claim(ClaimTypes.Role, appUser.Role),
@@ -196,21 +196,73 @@ namespace BankLite.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new AppUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                //var user = new AppUser { UserName = model.Email, Email = model.Email };
+                //var result = await UserManager.CreateAsync(user, model.Password);
+                //if (result.Succeeded)
+                //{
+                //    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                //    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                //    // Send an email with this link
+                //    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                //    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                //    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                //    return RedirectToAction("Index", "Home");
+                //}
+                //AddErrors(result);
+
+                AppUser appUser = new AppUser();
+                User user = new User();
+                UserRepository UserRepository = new UserRepository();
+                string result = UserRepository.AddUser(model.UserName, model.Password);
+                int id;
+                int.TryParse(result.ToString(), out id);
+                if (id != 0)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    UserData userData = new UserData()
+                    {
+                        DateOfBirth = model.DateOfBirth,
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        OIB = model.OIB,
+                        Telephone = model.Telephone,
+                        User_ID = id
+                    };
+                    UserDataRepository UserDataRepository = new UserDataRepository();
+                    UserDataRepository.Add(userData);
 
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    user = UserRepository.Find(id);
+                    appUser.UserName = user.UserName;
+                    appUser.User_ID = user.ID;
+                    appUser.Role_ID = user.Role_ID;
+                    appUser.Role = user.Role.Name;
+                    var ident = new ClaimsIdentity(
+              new[] { 
+              // adding following 2 claim just for supporting default antiforgery provider
+              new Claim(ClaimTypes.NameIdentifier, appUser.UserName),
+              new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
 
-                    return RedirectToAction("Index", "Home");
+              new Claim(ClaimTypes.Name,appUser.UserName),
+              new Claim("User_ID", appUser.User_ID.ToString()),
+
+              // optionally you could add roles if any
+              new Claim(ClaimTypes.Role, appUser.Role),
+
+              },
+              DefaultAuthenticationTypes.ApplicationCookie);
+
+                    HttpContext.GetOwinContext().Authentication.SignIn(
+                       new AuthenticationProperties { IsPersistent = false }, ident);
+
+                    return RedirectToAction("Home");
                 }
-                AddErrors(result);
+                else
+                {
+                    ModelState.AddModelError("", result.ToString());
+                    return View(model);
+                }
             }
 
             // If we got this far, something failed, redisplay form

@@ -15,6 +15,7 @@ namespace BankLite.Model
         [ForeignKey("Currency")]
         public int Currency_ID { get; set; }
         [Required]
+        [Display(Name ="Vrijednost")]
         public decimal Value { get; set; }
 
         public virtual Currency Currency { get; set; }
